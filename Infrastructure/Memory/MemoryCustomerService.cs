@@ -1,4 +1,4 @@
-﻿using AppCore.Interfaces;
+using AppCore.Interfaces;
 using AppCore.Models;
 
 namespace Infrastructure.Memory;
@@ -31,6 +31,6 @@ public class MemoryCustomerService: ICustomerService
 
     public Task<IEnumerable<Customer>> GetCustomersAsync()
     {
-        throw new NotImplementedException();
+        return Task.FromResult(GetCustomers());
     }
 }

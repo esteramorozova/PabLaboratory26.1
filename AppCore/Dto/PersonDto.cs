@@ -1,10 +1,10 @@
-﻿namespace AppCore.Dto;
+namespace AppCore.Dto;
 using AppCore.Models;
 
 public record PersonDto : ContactBaseDto
 {
-    public string FirstName { get; init; }
-    public string LastName { get; init; }
+    public required string FirstName { get; init; }
+    public required string LastName { get; init; }
     public string? Position { get; init; }
     public DateTime? BirthDate { get; init; }
     public Gender Gender { get; init; }

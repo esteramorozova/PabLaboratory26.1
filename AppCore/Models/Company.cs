@@ -1,8 +1,8 @@
-﻿namespace AppCore.Models;
+namespace AppCore.Models;
 
 public class Company : Contact
 {
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     public string? NIP { get; set; }
     public string? REGON { get; set; }

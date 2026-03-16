@@ -1,11 +1,11 @@
-﻿namespace AppCore.Models;
+namespace AppCore.Models;
 
 public class Address : EntityBase
 {
-    public string Street { get; set; }
-    public string City { get; set; }
-    public string PostalCode { get; set; }
-    public string Country { get; set; }
+    public required string Street { get; set; }
+    public required string City { get; set; }
+    public required string PostalCode { get; set; }
+    public required string Country { get; set; }
 
     public AddressType Type { get; set; }
 }
