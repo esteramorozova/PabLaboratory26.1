@@ -10,8 +10,16 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+        builder.Services.AddControllers();
         builder.Services.AddAuthorization();
         builder.Services.AddSingleton<ICustomerService, MemoryCustomerService>();
+        
+        builder.Services.AddSingleton<IPersonRepository, MemoryPersonRepository>();
+        builder.Services.AddSingleton<ICompanyRepository, MemoryCompanyRepository>();
+        builder.Services.AddSingleton<IOrganizationRepository, MemoryOrganizationRepository>();
+
+        builder.Services.AddSingleton<IContactUnitOfWork, MemoryContactUnitOfWork>();
+        builder.Services.AddSingleton<IPersonService, MemoryPersonService>();
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
@@ -28,6 +36,7 @@ public class Program
 
         app.UseAuthorization();
         
+        app.MapControllers();
 
         app.MapGet("/api/customers", (ICustomerService service,HttpContext httpContext) =>
             {
