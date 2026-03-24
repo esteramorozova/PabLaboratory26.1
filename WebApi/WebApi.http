@@ -4,7 +4,7 @@ GET {{WebApi_HostAddress}}/api/contacts
 Accept: application/json
 
 ###
-GET {{WebApi_HostAddress}}/api/contacts/"wstaw znany guid"
+GET http://localhost:5105/api/contacts/26ee1377-8471-4623-a99d-62256634832c
 Accept: application/json
 
 ###
@@ -16,4 +16,14 @@ Content-Type: application/json
   "lastName" : "Nowak",
   "Email": "adam@wsei.edu.pl",
   "phone": "48 123 456 789"
+}
+
+
+###
+POST {{WebApi_HostAddress}}/api/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Adam",
+  "lastName" : "Nowak"
 }
