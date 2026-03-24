@@ -19,13 +19,15 @@ public record PersonDto : ContactBaseDto
             Id = person.Id,
             Email = person.Email,
             Phone = person.Phone,
-            Address = new AddressDto(
-                person.Address.Street,
-                person.Address.City,
-                person.Address.PostalCode,
-                person.Address.Country,
-                person.Address.Type
-            ),
+            Address = IsPlaceholderAddress(person.Address)
+                ? null
+                : new AddressDto(
+                    person.Address.Street,
+                    person.Address.City,
+                    person.Address.PostalCode,
+                    person.Address.Country,
+                    person.Address.Type
+                ),
             Status = person.Status,
             Tags = person.Tags.Select(t => t.Name).ToList(),
             CreatedAt = person.CreatedAt,
@@ -41,14 +43,9 @@ public record PersonDto : ContactBaseDto
     public static Person ToEntity(CreatePersonDto dto, Guid? id = null)
     {
         ArgumentNullException.ThrowIfNull(dto);
-        if (dto.Address is null) throw new ArgumentException("Address is required.", nameof(dto));
-
-        return new Person
-        {
-            Id = id ?? Guid.Empty,
-            Email = dto.Email,
-            Phone = dto.Phone,
-            Address = new Address
+        var addressEntity = dto.Address is null
+                ? CreatePlaceholderAddress()
+                : new Address
             {
                 Id = Guid.NewGuid(),
                 Street = dto.Address.Street,
@@ -56,18 +53,42 @@ public record PersonDto : ContactBaseDto
                 PostalCode = dto.Address.PostalCode,
                 Country = dto.Address.Country,
                 Type = dto.Address.Type
-            },
+            };
+
+        return new Person
+        {
+            Id = id ?? Guid.Empty,
+            Email = dto.Email,
+            Phone = dto.Phone,
+            Address = addressEntity,
             CreatedAt = DateTime.UtcNow,
             Status = ContactStatus.Active,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             Position = dto.Position,
-            BirthDate = dto.BirthDate,
-            Gender = dto.Gender,
+            BirthDate = dto.BirthDate, 
+            Gender = dto.Gender, 
             Employer = null,
             Organization = null
         };
     }
+    
+    private static Address CreatePlaceholderAddress() =>
+        new()
+        {
+            Id = Guid.NewGuid(),
+            Street = string.Empty,
+            City = string.Empty,
+            PostalCode = string.Empty,
+            Country = string.Empty,
+            Type = AddressType.Main
+        };
+
+    private static bool IsPlaceholderAddress(Address address) =>
+        address.Street.Length == 0
+        && address.City.Length == 0
+        && address.PostalCode.Length == 0
+        && address.Country.Length == 0;
 }
 
 public record CreatePersonDto(

@@ -6,7 +6,7 @@ namespace Infrastructure.Memory;
 
 public class MemoryPersonService(IContactUnitOfWork unitOfWork) : IPersonService
 {
-    public async Task<Person> AddPerson(CreatePersonDto personDto)
+    public async Task<PersonDto> AddPerson(CreatePersonDto personDto)
     {
         var entity = PersonDto.ToEntity(personDto);
 
@@ -19,7 +19,7 @@ public class MemoryPersonService(IContactUnitOfWork unitOfWork) : IPersonService
 
         entity = await unitOfWork.Persons.AddAsync(entity);
         await unitOfWork.SaveChangesAsync();
-        return entity;
+        return PersonDto.FromEntity(entity);
     }
 
     public async Task<Person> UpdatePerson(UpdatePersonDto personDto)
@@ -69,15 +69,10 @@ public class MemoryPersonService(IContactUnitOfWork unitOfWork) : IPersonService
         return updated;
     }
 
-    public async Task<PersonDto> GetById(Guid id)
+    public async Task<PersonDto?> GetById(Guid id)
     {
         var person = await unitOfWork.Persons.FindByIdAsync(id);
-        if (person is null)
-        {
-            throw new KeyNotFoundException($"Person with id '{id}' was not found.");
-        }
-
-        return PersonDto.FromEntity(person);
+        return person is null ? null : PersonDto.FromEntity(person);
     }
 
     public async Task<PagedResult<PersonDto>> FindAllPeoplePaged(int page, int size)
@@ -87,17 +82,9 @@ public class MemoryPersonService(IContactUnitOfWork unitOfWork) : IPersonService
         return new PagedResult<PersonDto>(items, people.TotalCount, people.Page, people.PageSize);
     }
 
-    public async Task<PersonDto?> FindByIdAsync(Guid id)
-    {
-        var person = await unitOfWork.Persons.FindByIdAsync(id);
-        return person is null ? null : PersonDto.FromEntity(person);
-    }
+    public Task<PersonDto?> FindByIdAsync(Guid id) => GetById(id);
 
-    public async Task<PersonDto> CreateAsync(CreatePersonDto dto)
-    {
-        var created = await AddPerson(dto);
-        return PersonDto.FromEntity(created);
-    }
+    public Task<PersonDto> CreateAsync(CreatePersonDto dto) => AddPerson(dto);
 
     public async Task<PersonDto> UpdateAsync(Guid id, UpdatePersonDto dto)
     {

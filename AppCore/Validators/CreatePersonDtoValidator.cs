@@ -29,6 +29,7 @@ public class CreatePersonDtoValidator : AbstractValidator<CreatePersonDto>
             .MaximumLength(200);
         
         RuleFor(x => x.Phone)
+            .NotEmpty().WithMessage("Numer telefonu jest wymagany.")
             .Matches(@"^(\+?\d{1,3})?[\s-]?\d{3}[\s-]?\d{3}[\s-]?\d{3}$")
             .WithMessage("Nieprawidłowy format numeru telefonu.")
             .When(x => !string.IsNullOrEmpty(x.Phone));

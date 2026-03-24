@@ -1,6 +1,19 @@
 @WebApi_HostAddress = http://localhost:5105
 
-GET {{WebApi_HostAddress}}/weatherforecast/
+GET {{WebApi_HostAddress}}/api/contacts
 Accept: application/json
 
 ###
+GET {{WebApi_HostAddress}}/api/contacts/"wstaw znany guid"
+Accept: application/json
+
+###
+POST {{WebApi_HostAddress}}/api/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Adam",
+  "lastName" : "Nowak",
+  "Email": "adam@wsei.edu.pl",
+  "phone": "48 123 456 789"
+}
