@@ -33,5 +33,20 @@ public class ContactsController(IPersonService service): ControllerBase
         var result = await service.AddPerson(dto);
         return CreatedAtAction(nameof(GetPerson), new { id = result.Id }, result);
     }
+    
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdatePersonDto dto)
+    {
+        
+        var person = await service.GetById(id);
+    
+        if (person is null)
+        {
+            return NotFound(new { Message = $"Person with ID {id} not found." });
+        }
+
+        var updatedPerson = await service.UpdateAsync(id, dto);
+        return Ok(updatedPerson);
+    }
 }
 

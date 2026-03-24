@@ -27,3 +27,33 @@ Content-Type: application/json
   "firstName": "Adam",
   "lastName" : "Nowak"
 }
+
+###
+POST {{WebApi_HostAddress}}/api/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Antoni",
+  "lastName" : "Kowalski",
+  "email": "antek@wsei.edu.pl",
+  "phone": "48 123 456 333",
+  "address": {
+    "street": "Krowoderska 10",
+    "city": "Krakow",
+    "postalCode": "31-145",
+    "country": "Poland"
+  }
+}
+
+###
+PUT http://localhost:5105/api/contacts/b2ec2433-6d05-4cd4-bba5-1708061bed02
+Content-Type: application/json
+
+{
+  "firstName": "Antonina",
+  "lastName": "Kowalski-Nowak",
+  "email": "antonina@wsei.edu.pl",
+  "phone": "48 999 000 111",
+  "gender": 1,
+  "id": "b2ec2433-6d05-4cd4-bba5-1708061bed02"
+}
