@@ -83,6 +83,7 @@ public record CreatePersonDto(
 );
 
 public record UpdatePersonDto(
+    Guid Id,
     string? FirstName,
     string? LastName,
     string? Email,

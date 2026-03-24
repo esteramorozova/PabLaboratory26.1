@@ -6,6 +6,80 @@ namespace Infrastructure.Memory;
 
 public class MemoryPersonService(IContactUnitOfWork unitOfWork) : IPersonService
 {
+    public async Task<Person> AddPerson(CreatePersonDto personDto)
+    {
+        var entity = PersonDto.ToEntity(personDto);
+
+        if (personDto.EmployerId is Guid employerId)
+        {
+            var employer = await unitOfWork.Companies.FindByIdAsync(employerId);
+            if (employer is null) throw new KeyNotFoundException($"Company with id '{employerId}' was not found.");
+            entity.Employer = employer;
+        }
+
+        entity = await unitOfWork.Persons.AddAsync(entity);
+        await unitOfWork.SaveChangesAsync();
+        return entity;
+    }
+
+    public async Task<Person> UpdatePerson(UpdatePersonDto personDto)
+    {
+        var person = await unitOfWork.Persons.FindByIdAsync(personDto.Id);
+        if (person is null) throw new KeyNotFoundException($"Person with id '{personDto.Id}' was not found.");
+
+        if (personDto.FirstName is not null) person.FirstName = personDto.FirstName;
+        if (personDto.LastName is not null) person.LastName = personDto.LastName;
+        if (personDto.Email is not null) person.Email = personDto.Email;
+        if (personDto.Phone is not null) person.Phone = personDto.Phone;
+        if (personDto.Position is not null) person.Position = personDto.Position;
+        if (personDto.BirthDate is not null) person.BirthDate = personDto.BirthDate;
+        if (personDto.Gender is not null) person.Gender = personDto.Gender.Value;
+        if (personDto.Status is not null) person.Status = personDto.Status.Value;
+
+        if (personDto.Address is not null)
+        {
+            person.Address.Street = personDto.Address.Street;
+            person.Address.City = personDto.Address.City;
+            person.Address.PostalCode = personDto.Address.PostalCode;
+            person.Address.Country = personDto.Address.Country;
+            person.Address.Type = personDto.Address.Type;
+        }
+
+        if (personDto.EmployerId is not null)
+        {
+            if (personDto.EmployerId.Value == Guid.Empty)
+            {
+                person.Employer = null;
+            }
+            else
+            {
+                var employer = await unitOfWork.Companies.FindByIdAsync(personDto.EmployerId.Value);
+                if (employer is null)
+                {
+                    throw new KeyNotFoundException($"Company with id '{personDto.EmployerId.Value}' was not found.");
+                }
+
+                person.Employer = employer;
+            }
+        }
+
+        person.UpdatedAt = DateTime.UtcNow;
+        var updated = await unitOfWork.Persons.UpdateAsync(person);
+        await unitOfWork.SaveChangesAsync();
+        return updated;
+    }
+
+    public async Task<PersonDto> GetById(Guid id)
+    {
+        var person = await unitOfWork.Persons.FindByIdAsync(id);
+        if (person is null)
+        {
+            throw new KeyNotFoundException($"Person with id '{id}' was not found.");
+        }
+
+        return PersonDto.FromEntity(person);
+    }
+
     public async Task<PagedResult<PersonDto>> FindAllPeoplePaged(int page, int size)
     {
         var people = await unitOfWork.Persons.FindPagedAsync(page, size);
@@ -21,65 +95,13 @@ public class MemoryPersonService(IContactUnitOfWork unitOfWork) : IPersonService
 
     public async Task<PersonDto> CreateAsync(CreatePersonDto dto)
     {
-        var entity = PersonDto.ToEntity(dto);
-
-        if (dto.EmployerId is Guid employerId)
-        {
-            var employer = await unitOfWork.Companies.FindByIdAsync(employerId);
-            if (employer is null) throw new KeyNotFoundException($"Company with id '{employerId}' was not found.");
-            entity.Employer = employer;
-        }
-
-        var created = await unitOfWork.Persons.AddAsync(entity);
-        await unitOfWork.SaveChangesAsync();
+        var created = await AddPerson(dto);
         return PersonDto.FromEntity(created);
     }
 
     public async Task<PersonDto> UpdateAsync(Guid id, UpdatePersonDto dto)
     {
-        var person = await unitOfWork.Persons.FindByIdAsync(id);
-        if (person is null) throw new KeyNotFoundException($"Person with id '{id}' was not found.");
-
-        if (dto.FirstName is not null) person.FirstName = dto.FirstName;
-        if (dto.LastName is not null) person.LastName = dto.LastName;
-        if (dto.Email is not null) person.Email = dto.Email;
-        if (dto.Phone is not null) person.Phone = dto.Phone;
-        if (dto.Position is not null) person.Position = dto.Position;
-        if (dto.BirthDate is not null) person.BirthDate = dto.BirthDate;
-        if (dto.Gender is not null) person.Gender = dto.Gender.Value;
-        if (dto.Status is not null) person.Status = dto.Status.Value;
-
-        if (dto.Address is not null)
-        {
-            person.Address.Street = dto.Address.Street;
-            person.Address.City = dto.Address.City;
-            person.Address.PostalCode = dto.Address.PostalCode;
-            person.Address.Country = dto.Address.Country;
-            person.Address.Type = dto.Address.Type;
-        }
-
-        if (dto.EmployerId is not null)
-        {
-            if (dto.EmployerId.Value == Guid.Empty)
-            {
-                person.Employer = null;
-            }
-            else
-            {
-                var employer = await unitOfWork.Companies.FindByIdAsync(dto.EmployerId.Value);
-                if (employer is null)
-                {
-                    throw new KeyNotFoundException($"Company with id '{dto.EmployerId.Value}' was not found.");
-                }
-
-                person.Employer = employer;
-            }
-        }
-
-        person.UpdatedAt = DateTime.UtcNow;
-
-        var updated = await unitOfWork.Persons.UpdateAsync(person);
-        await unitOfWork.SaveChangesAsync();
+        var updated = await UpdatePerson(dto with { Id = id });
         return PersonDto.FromEntity(updated);
     }
 

@@ -1,4 +1,4 @@
-﻿using AppCore.Dto;
+using AppCore.Dto;
 using AppCore.Interfaces;
 using AppCore.Validators.Shared;
 using FluentValidation;
@@ -7,11 +7,14 @@ namespace AppCore.Validators;
 
 public class UpdatePersonDtoValidator : AbstractValidator<UpdatePersonDto>
 {
-    private readonly ICompanyRepositoryAsync _companyRepository;
+    private readonly ICompanyRepository _companyRepository;
 
-    public UpdatePersonDtoValidator(ICompanyRepositoryAsync companyRepository)
+    public UpdatePersonDtoValidator(ICompanyRepository companyRepository)
     {
         _companyRepository = companyRepository;
+
+        RuleFor(x => x.Id)
+            .NotEmpty().WithMessage("Id osoby jest wymagane.");
         
         RuleFor(x => x.FirstName)
             .MaximumLength(100).WithMessage("Imię nie może przekraczać 100 znaków.")

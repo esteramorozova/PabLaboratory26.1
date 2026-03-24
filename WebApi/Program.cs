@@ -1,4 +1,5 @@
 using AppCore.Interfaces;
+using AppCore.Module;
 using Infrastructure.Memory;
 
 namespace WebApi;
@@ -10,8 +11,9 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        builder.Services.AddControllers();
         builder.Services.AddAuthorization();
+        builder.Services.AddContactsModule(builder.Configuration); // moduł Contacts z walidatorami
+        builder.Services.AddControllers();
         builder.Services.AddSingleton<ICustomerService, MemoryCustomerService>();
         
         builder.Services.AddSingleton<IPersonRepository, MemoryPersonRepository>();

@@ -1,5 +1,4 @@
-﻿using AppCore.Dto;
-using AppCore.Models;
+using AppCore.Dto;
 using FluentValidation;
 
 namespace AppCore.Validators.Shared;
@@ -14,11 +13,10 @@ public class AddressDtoValidator : AbstractValidator<AddressDto>
 
         RuleFor(x => x.City)
             .NotEmpty().WithMessage("Miasto jest wymagane.")
-            .MaximumLength(100).WithMessage("Miasto nie może przekraczać 100 znaków."); 
+            .MaximumLength(100).WithMessage("Miasto nie może przekraczać 100 znaków.");
 
         RuleFor(x => x.PostalCode)
             .NotEmpty().WithMessage("Kod pocztowy jest wymagany.")
-            // Format xx-xxx: dwie cyfry, myślnik, trzy cyfry 
             .Matches(@"^\d{2}-\d{3}$").WithMessage("Kod pocztowy musi mieć format xx-xxx.");
 
         RuleFor(x => x.Country)

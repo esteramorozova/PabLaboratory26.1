@@ -1,4 +1,4 @@
-﻿using AppCore.Dto;
+using AppCore.Dto;
 using AppCore.Interfaces;
 using AppCore.Validators.Shared;
 using FluentValidation;
@@ -7,9 +7,9 @@ namespace AppCore.Validators;
 
 public class CreatePersonDtoValidator : AbstractValidator<CreatePersonDto>
 {
-    private readonly ICompanyRepositoryAsync _companyRepository;
+    private readonly ICompanyRepository _companyRepository;
 
-    public CreatePersonDtoValidator(ICompanyRepositoryAsync companyRepository)
+    public CreatePersonDtoValidator(ICompanyRepository companyRepository)
     {
         _companyRepository = companyRepository;
 

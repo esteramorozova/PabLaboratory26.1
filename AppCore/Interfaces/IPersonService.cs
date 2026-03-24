@@ -1,10 +1,14 @@
 using AppCore.Dto;
+using AppCore.Models;
 
 namespace AppCore.Interfaces;
 
 public interface IPersonService
 {
     Task<PagedResult<PersonDto>> FindAllPeoplePaged(int page, int size);
+    Task<Person> AddPerson(CreatePersonDto personDto);
+    Task<Person> UpdatePerson(UpdatePersonDto personDto);
+    Task<PersonDto> GetById(Guid id);
     Task<PersonDto?> FindByIdAsync(Guid id);
 
     Task<PersonDto> CreateAsync(CreatePersonDto dto);
