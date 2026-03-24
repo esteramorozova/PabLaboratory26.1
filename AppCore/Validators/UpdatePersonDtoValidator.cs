@@ -32,7 +32,7 @@ public class UpdatePersonDtoValidator : AbstractValidator<UpdatePersonDto>
             .When(x => x.Email is not null);
 
         RuleFor(x => x.Phone)
-            .Matches(@"^(\+\d{1,3})?[\s-]?\d{3}[\s-]?\d{3}[\s-]?\d{3}$")
+            .Matches(@"^(\+?\d{1,3})?[\s-]?\d{3}[\s-]?\d{3}[\s-]?\d{3}$")
             .WithMessage("Nieprawidłowy format numeru telefonu.")
             .When(x => !string.IsNullOrEmpty(x.Phone));
 
