@@ -46,7 +46,7 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:5105/api/contacts/b2ec2433-6d05-4cd4-bba5-1708061bed02
+PUT http://localhost:5105/api/contacts/fa4c7c6a-102a-45bc-842f-678c72c97bfe
 Content-Type: application/json
 
 {
@@ -55,5 +55,16 @@ Content-Type: application/json
   "email": "antonina@wsei.edu.pl",
   "phone": "48 999 000 111",
   "gender": 1,
-  "id": "b2ec2433-6d05-4cd4-bba5-1708061bed02"
+  "id": "fa4c7c6a-102a-45bc-842f-678c72c97bfe"
 }
+
+###
+POST {{WebApi_HostAddress}}/api/contacts/ffa044c3-2c26-4478-9438-7ce9db7b4d74/notes
+Content-Type: application/json
+
+{
+  "content": "New note"
+}
+###
+GET {{WebApi_HostAddress}}/api/contacts/34e32c3c-4255-4cb7-ab69-55e7bcf50b88/notes
+Content-Type: application/json

@@ -21,5 +21,8 @@ public interface IPersonService
     Task AddNoteAsync(Guid personId, string content, string createdBy);
     Task AddTagAsync(Guid personId, string tag);
     Task RemoveTagAsync(Guid personId, string tag);
+    
+    Task<Note> AddNoteToPerson(Guid personId, CreateNoteDto noteDto);
+    Task<PersonDto> GetPerson(Guid personId);
 }
 

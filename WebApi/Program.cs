@@ -9,8 +9,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
+        
         builder.Services.AddAuthorization();
         builder.Services.AddContactsModule(builder.Configuration); // moduł Contacts z walidatorami
         builder.Services.AddControllers();
@@ -22,13 +21,11 @@ public class Program
 
         builder.Services.AddSingleton<IContactUnitOfWork, MemoryContactUnitOfWork>();
         builder.Services.AddSingleton<IPersonService, MemoryPersonService>();
-
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+        
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
+        
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
