@@ -1,4 +1,5 @@
 using AppCore.Dto;
+using AppCore.Exceptions;
 using AppCore.Interfaces;
 using AppCore.Models;
 
@@ -11,7 +12,7 @@ public class MemoryPersonService(IContactUnitOfWork unitOfWork) : IPersonService
         var person = await unitOfWork.Persons.FindByIdAsync(personId);
 
         if (person is null) 
-            throw new Exception($"Person with id '{personId}' was not found.");
+            throw new ContactNotFoundException($"Person with id={personId} not found!");
         
         person.Notes ??= new List<Note>();
         
@@ -29,6 +30,23 @@ public class MemoryPersonService(IContactUnitOfWork unitOfWork) : IPersonService
         await unitOfWork.SaveChangesAsync();
         
         return note;
+    }
+
+    public async Task RemoveNoteFromPerson(Guid personId, Guid noteId)
+    {
+        var person = await unitOfWork.Persons.FindByIdAsync(personId);
+        if (person is null)
+            throw new ContactNotFoundException($"Person with id={personId} not found!");
+
+        person.Notes ??= new List<Note>();
+
+        var note = person.Notes.FirstOrDefault(n => n.Id == noteId);
+        if (note is null)
+            throw new Exception($"Note with id={noteId} not found for person with id={personId}!");
+
+        person.Notes.Remove(note);
+        await unitOfWork.Persons.UpdateAsync(person);
+        await unitOfWork.SaveChangesAsync();
     }
     
     public async Task<PersonDto> GetPerson(Guid personId)

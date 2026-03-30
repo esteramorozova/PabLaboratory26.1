@@ -59,12 +59,16 @@ Content-Type: application/json
 }
 
 ###
-POST {{WebApi_HostAddress}}/api/contacts/ffa044c3-2c26-4478-9438-7ce9db7b4d74/notes
+POST {{WebApi_HostAddress}}/api/contacts/31f80977-7008-42b5-8ef8-041d26aa5e19/notes
 Content-Type: application/json
 
 {
   "content": "New note"
 }
 ###
-GET {{WebApi_HostAddress}}/api/contacts/34e32c3c-4255-4cb7-ab69-55e7bcf50b88/notes
+GET {{WebApi_HostAddress}}/api/contacts/1f80977-7008-42b5-8ef8-041d26aa5e196b/notes
+Content-Type: application/json
+
+###
+DELETE {{WebApi_HostAddress}}/api/contacts/31f80977-7008-42b5-8ef8-041d26aa5e19/notes/cefabc42-823c-4765-968c-a0254550a513
 Content-Type: application/json

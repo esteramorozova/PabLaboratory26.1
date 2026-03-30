@@ -72,5 +72,14 @@ public class ContactsController(IPersonService service): ControllerBase
         var person = await service.GetPerson(contactId);
         return Ok(person.Notes);
     }
+
+    [HttpDelete("{contactId:guid}/notes/{noteId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RemoveNote([FromRoute] Guid contactId, [FromRoute] Guid noteId)
+    {
+        await service.RemoveNoteFromPerson(contactId, noteId);
+        return NoContent();
+    }
 }
 

@@ -21,6 +21,8 @@ public class Program
 
         builder.Services.AddSingleton<IContactUnitOfWork, MemoryContactUnitOfWork>();
         builder.Services.AddSingleton<IPersonService, MemoryPersonService>();
+        builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
+        builder.Services.AddProblemDetails();
         
         builder.Services.AddOpenApi();
 
@@ -34,6 +36,7 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
+        app.UseExceptionHandler();
         
         app.MapControllers();
 

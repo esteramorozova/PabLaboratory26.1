@@ -23,6 +23,7 @@ public interface IPersonService
     Task RemoveTagAsync(Guid personId, string tag);
     
     Task<Note> AddNoteToPerson(Guid personId, CreateNoteDto noteDto);
+    Task RemoveNoteFromPerson(Guid personId, Guid noteId);
     Task<PersonDto> GetPerson(Guid personId);
 }
 
