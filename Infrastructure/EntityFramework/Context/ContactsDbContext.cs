@@ -147,15 +147,19 @@ public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
         {
             entity.Property(p => p.Email).HasMaxLength(200);
             entity.Property(p => p.Phone).HasMaxLength(20);
-            // dodoj ograniczenia dla pozostałych właściwości 
+            entity.Property(p => p.CreatedAt).IsRequired();
+            entity.Property(p => p.UpdatedAt);
+            entity.Property(p => p.Status).HasConversion<string>();
         });
         
         builder.Entity<Person>(entity =>
         {
+            entity.Property(p => p.FirstName).HasMaxLength(100);
+            entity.Property(p => p.LastName).HasMaxLength(200);
+            entity.Property(p => p.MiddleName).HasMaxLength(200);
             entity.Property(p => p.BirthDate).HasColumnType("date");
             entity.Property(p => p.Gender).HasConversion<string>();
-            entity.Property(p => p.Status).HasConversion<string>();
-            // dodaj ograniczenia dla pozostałych właściwości
+            entity.Property(p => p.Position).HasMaxLength(200);
         });
         
         // definicja związku
@@ -168,10 +172,26 @@ public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
         builder.Entity<Organization>()
             .HasMany(o => o.Members)
             .WithOne(p => p.Organization);
+
+        builder.Entity<Organization>(entity =>
+        {
+            entity.Property(o => o.Name).HasMaxLength(200);
+            entity.Property(o => o.KRS).HasMaxLength(20);
+            entity.Property(o => o.Website).HasMaxLength(500);
+            entity.Property(o => o.Mission).HasMaxLength(2000);
+            entity.Property(o => o.Type).HasConversion<string>();
+        });
         
         // przykładowa firma
         builder.Entity<Company>(entity =>
         {
+            entity.Property(c => c.Name).HasMaxLength(200);
+            entity.Property(c => c.NIP).HasMaxLength(20);
+            entity.Property(c => c.REGON).HasMaxLength(20);
+            entity.Property(c => c.KRS).HasMaxLength(20);
+            entity.Property(c => c.Industry).HasMaxLength(200);
+            entity.Property(c => c.Website).HasMaxLength(500);
+
             entity.HasData(
                 new
                 {
@@ -234,7 +254,14 @@ public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
         });
         //mapowanie adresu jako typu osadzonej w encji Contact 
         builder.Entity<Contact>()
-            .OwnsOne(c => c.Address)
+            .OwnsOne(c => c.Address, owned =>
+            {
+                owned.Property(a => a.Street).HasMaxLength(200);
+                owned.Property(a => a.City).HasMaxLength(100);
+                owned.Property(a => a.PostalCode).HasMaxLength(20);
+                owned.Property(a => a.Country).HasMaxLength(100);
+                owned.Property(a => a.Type).HasConversion<string>();
+            })
             .HasData(
                 address,
                 new
