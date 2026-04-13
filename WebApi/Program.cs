@@ -1,6 +1,8 @@
 using AppCore.Interfaces;
 using AppCore.Module;
+using Microsoft.AspNetCore.Identity;
 using Infrastructure.Memory;
+using Infrastructure.EntityFramework.Entities;
 
 namespace WebApi;
 
@@ -8,6 +10,15 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        /* //generator haszy Admin123!
+        Console.Write("Podaj hasło: ");
+        var password = Console.ReadLine() ?? "";
+        var hasher = new PasswordHasher<IdentityUser>();
+        var hash = hasher.HashPassword(new IdentityUser { UserName = "seed" }, password);
+        Console.WriteLine("HASH:");
+        Console.WriteLine(hash);
+        */
+        
         var builder = WebApplication.CreateBuilder(args);
         
         builder.Services.AddAuthorization();
@@ -48,4 +59,5 @@ public class Program
 
         app.Run();
     }
+    
 }
