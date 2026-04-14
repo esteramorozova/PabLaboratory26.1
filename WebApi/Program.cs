@@ -3,6 +3,7 @@ using AppCore.Module;
 using Microsoft.AspNetCore.Identity;
 using Infrastructure.Memory;
 using Infrastructure.EntityFramework.Entities;
+using AppCore.Services;
 
 namespace WebApi;
 
@@ -31,7 +32,7 @@ public class Program
         builder.Services.AddSingleton<IOrganizationRepository, MemoryOrganizationRepository>();
 
         builder.Services.AddSingleton<IContactUnitOfWork, MemoryContactUnitOfWork>();
-        builder.Services.AddSingleton<IPersonService, MemoryPersonService>();
+        builder.Services.AddSingleton<IPersonService, PersonService>();
         builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
         builder.Services.AddProblemDetails();
         

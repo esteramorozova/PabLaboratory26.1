@@ -3,32 +3,32 @@ using AppCore.Exceptions;
 using AppCore.Interfaces;
 using AppCore.Models;
 
-namespace Infrastructure.Memory;
+namespace AppCore.Services;
 
-public class MemoryPersonService(IContactUnitOfWork unitOfWork) : IPersonService
+public class PersonService(IContactUnitOfWork unitOfWork) : IPersonService
 {
     public async Task<Note> AddNoteToPerson(Guid personId, CreateNoteDto noteDto)
     {
         var person = await unitOfWork.Persons.FindByIdAsync(personId);
 
-        if (person is null) 
+        if (person is null)
             throw new ContactNotFoundException($"Person with id={personId} not found!");
-        
+
         person.Notes ??= new List<Note>();
-        
+
         var note = new Note
         {
             Id = Guid.NewGuid(),
             Content = noteDto.Content,
             CreatedAt = DateTime.UtcNow,
-            CreatedBy = "System" 
+            CreatedBy = "System"
         };
-        
+
         person.Notes.Add(note);
-        
+
         await unitOfWork.Persons.UpdateAsync(person);
         await unitOfWork.SaveChangesAsync();
-        
+
         return note;
     }
 
@@ -48,16 +48,16 @@ public class MemoryPersonService(IContactUnitOfWork unitOfWork) : IPersonService
         await unitOfWork.Persons.UpdateAsync(person);
         await unitOfWork.SaveChangesAsync();
     }
-    
+
     public async Task<PersonDto> GetPerson(Guid personId)
     {
         var person = await unitOfWork.Persons.FindByIdAsync(personId);
-        if (person is null) 
+        if (person is null)
             throw new Exception($"Person with id '{personId}' was not found.");
 
         return PersonDto.FromEntity(person);
     }
-    
+
     public async Task<PersonDto> AddPerson(CreatePersonDto personDto)
     {
         var entity = PersonDto.ToEntity(personDto);
