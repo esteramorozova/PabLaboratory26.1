@@ -8,7 +8,7 @@ namespace AppCore.Module;
 
 public static class ContactsModule
 {
-    public static IServiceCollection AddContactsModule(
+    public static IServiceCollection AddContactsCoreModule(
         this IServiceCollection services,
         IConfiguration configuration)
     {

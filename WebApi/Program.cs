@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Infrastructure.Memory;
 using Infrastructure.EntityFramework.Entities;
 using AppCore.Services;
+using Infrastructure;
 
 namespace WebApi;
 
@@ -23,16 +24,12 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         
         builder.Services.AddAuthorization();
-        builder.Services.AddContactsModule(builder.Configuration); // moduł Contacts z walidatorami
+        builder.Services.AddContactsEfModule(builder.Configuration);
+        builder.Services.AddContactsCoreModule(builder.Configuration);  
         builder.Services.AddControllers();
         builder.Services.AddSingleton<ICustomerService, MemoryCustomerService>();
         
-        builder.Services.AddSingleton<IPersonRepository, MemoryPersonRepository>();
-        builder.Services.AddSingleton<ICompanyRepository, MemoryCompanyRepository>();
-        builder.Services.AddSingleton<IOrganizationRepository, MemoryOrganizationRepository>();
-
-        builder.Services.AddSingleton<IContactUnitOfWork, MemoryContactUnitOfWork>();
-        builder.Services.AddSingleton<IPersonService, PersonService>();
+        
         builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
         builder.Services.AddProblemDetails();
         
