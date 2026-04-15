@@ -71,27 +71,32 @@ public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
             new CrmRole(UserRole.Administrator.ToString())
             {
                 Id = RoleIdAdministrator,
-                NormalizedName = UserRole.Administrator.ToString().ToUpperInvariant()
+                NormalizedName = UserRole.Administrator.ToString().ToUpperInvariant(),
+                ConcurrencyStamp = "20000000-0000-0000-0000-000000000001"
             },
             new CrmRole(UserRole.SalesManager.ToString())
             {
                 Id = RoleIdSalesManager,
-                NormalizedName = UserRole.SalesManager.ToString().ToUpperInvariant()
+                NormalizedName = UserRole.SalesManager.ToString().ToUpperInvariant(),
+                ConcurrencyStamp = "20000000-0000-0000-0000-000000000002"
             },
             new CrmRole(UserRole.Salesperson.ToString())
             {
                 Id = RoleIdSalesperson,
-                NormalizedName = UserRole.Salesperson.ToString().ToUpperInvariant()
+                NormalizedName = UserRole.Salesperson.ToString().ToUpperInvariant(),
+                ConcurrencyStamp = "20000000-0000-0000-0000-000000000003"
             },
             new CrmRole(UserRole.SupportAgent.ToString())
             {
                 Id = RoleIdSupportAgent,
-                NormalizedName = UserRole.SupportAgent.ToString().ToUpperInvariant()
+                NormalizedName = UserRole.SupportAgent.ToString().ToUpperInvariant(),
+                ConcurrencyStamp = "20000000-0000-0000-0000-000000000004"
             },
             new CrmRole(UserRole.ReadOnly.ToString())
             {
                 Id = RoleIdReadOnly,
-                NormalizedName = UserRole.ReadOnly.ToString().ToUpperInvariant()
+                NormalizedName = UserRole.ReadOnly.ToString().ToUpperInvariant(),
+                ConcurrencyStamp = "20000000-0000-0000-0000-000000000005"
             });
 
         builder.Entity<CrmUser>().HasData(
@@ -104,6 +109,8 @@ public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
                 NormalizedEmail = "ADMIN@WSEI.EDU.PL",
                 EmailConfirmed = true,
                 PasswordHash = PasswordHashUser1,
+                SecurityStamp = "30000000-0000-0000-0000-000000000001",
+                ConcurrencyStamp = "30000000-0000-0000-0000-000000000002",
                 LockoutEnabled = true,
                 AccessFailedCount = 0,
                 FirstName = "Jan",
@@ -122,6 +129,8 @@ public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
                 NormalizedEmail = "ANNA.SALES@WSEI.EDU.PL",
                 EmailConfirmed = true,
                 PasswordHash = PasswordHashUser2,
+                SecurityStamp = "30000000-0000-0000-0000-000000000003",
+                ConcurrencyStamp = "30000000-0000-0000-0000-000000000004",
                 LockoutEnabled = true,
                 AccessFailedCount = 0,
                 FirstName = "Anna",
@@ -210,6 +219,7 @@ public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
         
         var address = new
         {
+            Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             City = "Kraków",
             Country = "Poland",
             PostalCode = "25-009",
@@ -252,7 +262,7 @@ public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
                     UpdatedAt = SeedTimestamp
                 });
         });
-        //mapowanie adresu jako typu osadzonej w encji Contact 
+        // mapowanie adresu jako typu osadzonego w encji Contact
         builder.Entity<Contact>()
             .OwnsOne(c => c.Address, owned =>
             {
@@ -261,26 +271,32 @@ public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
                 owned.Property(a => a.PostalCode).HasMaxLength(20);
                 owned.Property(a => a.Country).HasMaxLength(100);
                 owned.Property(a => a.Type).HasConversion<string>();
-            })
-            .HasData(
-                address,
-                new
-                {
-                    City = "Kraków",
-                    Country = "Poland",
-                    PostalCode = "30-001",
-                    Street = "ul. Grodzka 1",
-                    Type = AddressType.Main,
-                    ContactId = Guid.Parse("B4DCB17C-F875-43F8-9D66-36597895A466")
-                },
-                new
-                {
-                    City = "Lublin",
-                    Country = "Poland",
-                    PostalCode = "20-038",
-                    Street = "ul. Projektowa 4",
-                    Type = AddressType.Main,
-                    ContactId = Guid.Parse("516A34D7-CCFB-4F20-85F3-62BD0F3AF271")
-                });
+            });
+
+        // seed owned-type dla TPH musi być dodany na konkretnych typach
+        builder.Entity<Person>().OwnsOne(p => p.Address).HasData(
+            address,
+            new
+            {
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                City = "Kraków",
+                Country = "Poland",
+                PostalCode = "30-001",
+                Street = "ul. Grodzka 1",
+                Type = AddressType.Main,
+                ContactId = Guid.Parse("B4DCB17C-F875-43F8-9D66-36597895A466")
+            });
+
+        builder.Entity<Company>().OwnsOne(c => c.Address).HasData(
+            new
+            {
+                Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                City = "Lublin",
+                Country = "Poland",
+                PostalCode = "20-038",
+                Street = "ul. Projektowa 4",
+                Type = AddressType.Main,
+                ContactId = Guid.Parse("516A34D7-CCFB-4F20-85F3-62BD0F3AF271")
+            });
     }
 }
