@@ -4,6 +4,7 @@ using AppCore.Models;
 using AppCore;
 using Infrastructure.EntityFramework.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.EntityFramework.Context;
 public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
@@ -34,12 +35,15 @@ public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
         if (optionsBuilder.IsConfigured)
             return;
 
-        var dataDir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "PabLaboratory26");
-        Directory.CreateDirectory(dataDir);
-        var dbPath = Path.Combine(dataDir, "contacts.db");
-        optionsBuilder.UseSqlite($"Data Source={dbPath}");
+        var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddJsonFile(Path.Combine("WebApi", "appsettings.json"), optional: true)
+            .AddEnvironmentVariables()
+            .Build();
+
+        var connectionString = config.GetConnectionString("CrmDb") ?? "Data Source=contacts.db";
+        optionsBuilder.UseSqlite(connectionString);
     }
 
     public ContactsDbContext()
