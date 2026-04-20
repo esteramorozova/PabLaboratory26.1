@@ -21,12 +21,12 @@ public class PersonService(IContactUnitOfWork unitOfWork) : IPersonService
             Id = Guid.NewGuid(),
             Content = noteDto.Content,
             CreatedAt = DateTime.UtcNow,
-            CreatedBy = "System"
+            CreatedBy = "System",
+            ContactId = personId
         };
 
         person.Notes.Add(note);
-
-        await unitOfWork.Persons.UpdateAsync(person);
+        await unitOfWork.Persons.AddNoteToPersonAsync(note);
         await unitOfWork.SaveChangesAsync();
 
         return note;
@@ -45,7 +45,6 @@ public class PersonService(IContactUnitOfWork unitOfWork) : IPersonService
             throw new Exception($"Note with id={noteId} not found for person with id={personId}!");
 
         person.Notes.Remove(note);
-        await unitOfWork.Persons.UpdateAsync(person);
         await unitOfWork.SaveChangesAsync();
     }
 

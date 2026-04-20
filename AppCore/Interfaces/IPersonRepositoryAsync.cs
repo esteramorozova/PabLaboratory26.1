@@ -4,6 +4,7 @@ namespace AppCore.Interfaces;
 
 public interface IPersonRepositoryAsync : IGenericRepositoryAsync<Person>
 {
+    Task AddNoteToPersonAsync(Note note);
     Task<IEnumerable<Person>> FindByEmployerAsync(Guid companyId);
     Task<IEnumerable<Person>> FindByOrganizationAsync(Guid organizationId);
 }

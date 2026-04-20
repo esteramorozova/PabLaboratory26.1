@@ -22,28 +22,26 @@ public class Program
         */
         
         var builder = WebApplication.CreateBuilder(args);
-        
+
         builder.Services.AddAuthorization();
         builder.Services.AddContactsEfModule(builder.Configuration);
-        builder.Services.AddContactsCoreModule(builder.Configuration);  
-        builder.Services.AddControllers();
+        builder.Services.AddContactsCoreModule(builder.Configuration);
         builder.Services.AddSingleton<ICustomerService, MemoryCustomerService>();
-        
-        
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
         builder.Services.AddProblemDetails();
-        
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
-        
+
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
         }
 
         app.UseHttpsRedirection();
-
+        app.UseAuthentication();
         app.UseAuthorization();
         app.UseExceptionHandler();
         

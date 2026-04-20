@@ -8,7 +8,7 @@ namespace Infrastructure.EntityFramework.Repositories;
 public class EfGenericRepository<T>(DbSet<T> set) : IGenericRepositoryAsync<T>
     where T : EntityBase
 {
-    public async Task<T?> FindByIdAsync(Guid id)
+    public virtual async Task<T?> FindByIdAsync(Guid id)
     {
         return await set.FindAsync(id);
     }

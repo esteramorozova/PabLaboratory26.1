@@ -96,5 +96,10 @@ public class MemoryPersonRepository : MemoryGenericRepository<Person>, IPersonRe
         IEnumerable<Person> result = _data.Values.Where(p => p.Organization != null && p.Organization.Id == organizationId);
         return Task.FromResult(result);
     }
+    
+    public Task AddNoteToPersonAsync(Note note)
+    {
+        return Task.CompletedTask;
+    }
 }
 

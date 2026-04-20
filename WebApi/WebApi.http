@@ -74,3 +74,21 @@ DELETE {{WebApi_HostAddress}}/api/contacts/a3acddb3-a2cf-4d0c-9437-4a135e363c61/
 Content-Type: application/json
 
 
+###
+POST {{WebApi_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@wsei.edu.pl",
+  "password": "Admin123!"
+}
+
+###
+# Oczekiwane: 401 Unauthorized (bledne haslo)
+POST {{WebApi_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@wsei.edu.pl",
+  "password": "zle_haslo"
+}
