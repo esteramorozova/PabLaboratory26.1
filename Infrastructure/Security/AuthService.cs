@@ -125,7 +125,7 @@ namespace Infrastructure.Security;
 	                FirstName = user.FirstName,
 	                LastName = user.LastName,
 	                Status = user.Status,
-	                Email = user.Email,
+	                Email = user.Email ?? string.Empty,
 	                Department = user.Department,
 	                Roles = roles
 	            }
@@ -142,6 +142,7 @@ namespace Infrastructure.Security;
 	            new(ClaimTypes.GivenName,      user.FirstName),
 	            new(ClaimTypes.Surname,        user.LastName),
 	            new("department",              user.Department),
+	            new("status",                  user.Status.ToString()),
 	            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 	            new(JwtRegisteredClaimNames.Iat,
 	                DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString())
