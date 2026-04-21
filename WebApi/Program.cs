@@ -1,5 +1,6 @@
 using AppCore.Interfaces;
 using AppCore.Module;
+using AppCore.Seeders;
 using Infrastructure.Memory;
 using Infrastructure.Security;
 using Infrastructure;
@@ -9,7 +10,7 @@ namespace WebApi;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         /* //generator haszy Admin123!
         Console.Write("Podaj hasło: ");
@@ -38,6 +39,14 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+
+            using var scope = app.Services.CreateScope();
+            var seeders = scope.ServiceProvider
+                .GetServices<IDataSeeder>()
+                .OrderBy(s => s.Order);
+
+            foreach (var seeder in seeders)
+                await seeder.SeedAsync();
         }
 
         app.UseHttpsRedirection();

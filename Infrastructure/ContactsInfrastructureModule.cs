@@ -1,6 +1,7 @@
 using AppCore.Authorization;
 using AppCore.Interfaces;
 using AppCore.Services;
+using AppCore.Seeders;
 using AppCore;
 using Infrastructure.EntityFramework.Context;
 using Infrastructure.EntityFramework.Entities;
@@ -8,6 +9,7 @@ using Infrastructure.EntityFramework.Repositories;
 using Infrastructure.EntityFramework.UnitOfWork;
 using Infrastructure.Memory;
 using Infrastructure.Security;
+using Infrastructure.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -47,6 +49,7 @@ public static class ContactsInfrastructureModule
 
         services.AddScoped<IPersonService, PersonService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IDataSeeder, ContactsDbSeeder>();
 
         return services;
     }
