@@ -34,3 +34,4 @@ public enum OrganizationType
     Foundation,
     Other
 }
+
