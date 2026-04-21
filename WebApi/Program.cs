@@ -21,10 +21,10 @@ public class Program
         */
         
         var builder = WebApplication.CreateBuilder(args);
-
-        builder.Services.AddAuthorization();
+        
         builder.Services.AddContactsEfModule(builder.Configuration);
         builder.Services.AddContactsCoreModule(builder.Configuration);
+        builder.Services.AddSingleton<JwtSettings>();
         builder.Services.AddJwt(new JwtSettings(builder.Configuration));
         builder.Services.AddSingleton<ICustomerService, MemoryCustomerService>();
         builder.Services.AddControllers();

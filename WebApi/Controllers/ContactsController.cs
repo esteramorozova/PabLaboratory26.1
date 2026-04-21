@@ -1,5 +1,7 @@
+using AppCore.Authorization;
 using AppCore.Dto;
 using AppCore.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -9,7 +11,8 @@ namespace WebApi.Controllers;
 public class ContactsController(IPersonService service): ControllerBase
 {
     [HttpGet]
-    public  async Task<IActionResult> GetAllPersons(int page = 1, int size = 10)
+    [Authorize(Policy = nameof(CrmPolicies.ReadOnlyAccess))]
+    public async Task<IActionResult> GetAllPersons(int page = 1, int size = 10)
     {
         return Ok(await service.FindAllPeoplePaged(page, size));
     }
@@ -18,12 +21,8 @@ public class ContactsController(IPersonService service): ControllerBase
     public async Task<IActionResult> GetPerson(Guid id)
     {
         var dto = await service.GetById(id);
-        
         if (dto == null)
-        {
             return NotFound(); 
-        }
-        
         return Ok(dto);
     }
     
@@ -37,14 +36,9 @@ public class ContactsController(IPersonService service): ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdatePersonDto dto)
     {
-        
         var person = await service.GetById(id);
-    
         if (person is null)
-        {
             return NotFound(new { Message = $"Person with ID {id} not found." });
-        }
-
         var updatedPerson = await service.UpdateAsync(id, dto);
         return Ok(updatedPerson);
     }
@@ -58,10 +52,7 @@ public class ContactsController(IPersonService service): ControllerBase
         [FromBody] CreateNoteDto dto)
     {
         var note = await service.AddNoteToPerson(contactId, dto);
-        return CreatedAtAction(
-            nameof(GetNotes),
-            new { contactId },
-            note);
+        return CreatedAtAction(nameof(GetNotes), new { contactId }, note);
     }
 
     [HttpGet("{contactId:guid}/notes")]
@@ -82,4 +73,3 @@ public class ContactsController(IPersonService service): ControllerBase
         return NoContent();
     }
 }
-
