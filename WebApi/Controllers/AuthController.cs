@@ -1,38 +1,68 @@
-using Infrastructure.EntityFramework.Entities;
-using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using AppCore.Dto;
+using AppCore.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
-[Route("/api/auth")]
-public class AuthController(UserManager<CrmUser> userManager) : ControllerBase
+[Route("api/auth")]
+public class AuthController : ControllerBase
 {
+    private readonly IAuthService _authService;
+
+    public AuthController(IAuthService authService) =>
+        _authService = authService;
+
+    /// <summary>Logowanie — zwraca access token i refresh token.</summary>
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        var user = await userManager.FindByEmailAsync(request.Email);
-        if (user is null)
-        {
-            return Unauthorized(new { message = "Nieprawidlowy email lub haslo." });
-        }
+        var result = await _authService.LoginAsync(dto);
+        return Ok(result);
+    }
 
-        var passwordValid = await userManager.CheckPasswordAsync(user, request.Password);
-        if (!passwordValid)
-        {
-            return Unauthorized(new { message = "Nieprawidlowy email lub haslo." });
-        }
+    /// <summary>Odświeżenie access tokenu.</summary>
+    [HttpPost("refresh")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto dto)
+    {
+        var result = await _authService.RefreshTokenAsync(dto);
+        return Ok(result);
+    }
 
-        var roles = await userManager.GetRolesAsync(user);
-        return Ok(new
+    /// <summary>Wylogowanie — unieważnia refresh token.</summary>
+    [HttpPost("revoke")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Revoke([FromBody] string refreshToken)
+    {
+        await _authService.RevokeTokenAsync(refreshToken);
+        return NoContent();
+    }
+
+    /// <summary>Dane zalogowanego użytkownika.</summary>
+    [HttpGet("me")]
+    [Authorize]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    public IActionResult Me()
+    {
+        var user = new UserDto
         {
-            message = "Logowanie poprawne.",
-            userId = user.Id,
-            email = user.Email,
-            roles
-        });
+            Id = User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+            Email = User.FindFirstValue(ClaimTypes.Email)!,
+            FirstName = User.FindFirstValue(ClaimTypes.GivenName)!,
+            LastName = User.FindFirstValue(ClaimTypes.Surname)!,
+            Department = User.FindFirstValue("department")!,
+            Roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value)
+        };
+
+        return Ok(user);
     }
 }
-
-public record LoginRequest(string Email, string Password);
-

@@ -1,10 +1,9 @@
 using AppCore.Interfaces;
 using AppCore.Module;
-using Microsoft.AspNetCore.Identity;
 using Infrastructure.Memory;
-using Infrastructure.EntityFramework.Entities;
-using AppCore.Services;
+using Infrastructure.Security;
 using Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi;
 
@@ -26,6 +25,7 @@ public class Program
         builder.Services.AddAuthorization();
         builder.Services.AddContactsEfModule(builder.Configuration);
         builder.Services.AddContactsCoreModule(builder.Configuration);
+        builder.Services.AddJwt(new JwtSettings(builder.Configuration));
         builder.Services.AddSingleton<ICustomerService, MemoryCustomerService>();
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -51,7 +51,8 @@ public class Program
             {
                 return service.GetCustomers();
             })
-            .WithName("GetCustomers");
+            .WithName("GetCustomers")
+            .AllowAnonymous();
 
         app.Run();
     }
