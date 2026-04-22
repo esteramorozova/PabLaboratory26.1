@@ -119,9 +119,9 @@ public class ContactsDbContext: IdentityDbContext<CrmUser, CrmRole, string>
                 ConcurrencyStamp = "30000000-0000-0000-0000-000000000002",
                 LockoutEnabled = true,
                 AccessFailedCount = 0,
-                FirstName = "Jan",
-                LastName = "Kowalski",
-                FullName = "Jan Kowalski",
+                FirstName = "Adam",
+                LastName = "Kowalko",
+                FullName = "Adam Kowalko",
                 Department = "Administracja",
                 Status = SystemUserStatus.Active,
                 CreatedAt = SeedTimestamp

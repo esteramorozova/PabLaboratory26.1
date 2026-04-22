@@ -49,6 +49,7 @@ public static class ContactsInfrastructureModule
 
         services.AddScoped<IPersonService, PersonService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IDataSeeder, IdentityDbSeeder>();
         services.AddScoped<IDataSeeder, ContactsDbSeeder>();
 
         return services;

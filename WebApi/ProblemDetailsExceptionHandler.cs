@@ -27,7 +27,17 @@ public class ProblemDetailsExceptionHandler(
             await context.Response.WriteAsJsonAsync(problem, cancellationToken);
             return true;
         }
-
+        if (exception.Message.Contains("Nieprawidłowy email") || 
+            exception.Message.Contains("Konto jest") ||
+            exception.Message.Contains("Nieprawidłowy token") ||
+            exception.Message.Contains("Nieprawidłowy refresh"))
+        {
+            logger.Log(LogLevel.Information, $"Auth exception '{exception.Message}' handled!");
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsJsonAsync(new { message = exception.Message });
+            return true;
+        }
+        
         return false;
     }
 }
