@@ -10,6 +10,8 @@ public record UserDto
     public string Department { get; init; } = string.Empty;
     public string? Position { get; init; }
     public SystemUserStatus Status { get; init; }
+    public bool IsLocked { get; init; }           
+    public DateTimeOffset? LockoutEnd { get; init; }
     public IEnumerable<string> Roles { get; init; } = [];
     public DateTime CreatedAt { get; init; }
     public DateTime? LastLoginAt { get; init; }

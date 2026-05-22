@@ -27,6 +27,15 @@ public class ProblemDetailsExceptionHandler(
             await context.Response.WriteAsJsonAsync(problem, cancellationToken);
             return true;
         }
+
+        if (exception is UserNotFoundException) 
+        {
+            logger.Log(LogLevel.Information, $"Exception '{exception.Message}' handled!");
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            await context.Response.WriteAsJsonAsync(new { message = exception.Message }, cancellationToken);
+            return true;
+        }
+
         if (exception.Message.Contains("Nieprawidłowy email") || 
             exception.Message.Contains("Konto jest") ||
             exception.Message.Contains("Nieprawidłowy token") ||
@@ -34,7 +43,7 @@ public class ProblemDetailsExceptionHandler(
         {
             logger.Log(LogLevel.Information, $"Auth exception '{exception.Message}' handled!");
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsJsonAsync(new { message = exception.Message });
+            await context.Response.WriteAsJsonAsync(new { message = exception.Message }, cancellationToken);
             return true;
         }
         
