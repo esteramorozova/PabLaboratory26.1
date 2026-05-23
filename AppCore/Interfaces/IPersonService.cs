@@ -6,12 +6,12 @@ namespace AppCore.Interfaces;
 public interface IPersonService
 {
     Task<PagedResult<PersonDto>> FindAllPeoplePaged(int page, int size);
-    Task<PersonDto> AddPerson(CreatePersonDto personDto);
+    Task<PersonDto> AddPerson(CreatePersonDto personDto, string? createdByUserId = null);
     Task<Person> UpdatePerson(UpdatePersonDto personDto);
     Task<PersonDto?> GetById(Guid id);
     Task<PersonDto?> FindByIdAsync(Guid id);
 
-    Task<PersonDto> CreateAsync(CreatePersonDto dto);
+    Task<PersonDto> CreateAsync(CreatePersonDto dto, string? createdByUserId = null);
     Task<PersonDto> UpdateAsync(Guid id, UpdatePersonDto dto);
     Task RemoveByIdAsync(Guid id);
 

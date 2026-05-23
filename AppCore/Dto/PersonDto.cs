@@ -32,6 +32,7 @@ public record PersonDto : ContactBaseDto
             Status = person.Status,
             Tags = person.Tags.Select(t => t.Name).ToList(),
             CreatedAt = person.CreatedAt,
+            CreatedByUserId = person.CreatedByUserId, 
             FirstName = person.FirstName,
             LastName = person.LastName,
             Position = person.Position,
@@ -42,12 +43,12 @@ public record PersonDto : ContactBaseDto
         };
     }
 
-    public static Person ToEntity(CreatePersonDto dto, Guid? id = null)
+    public static Person ToEntity(CreatePersonDto dto, Guid? id = null, string? createdByUserId = null)
     {
         ArgumentNullException.ThrowIfNull(dto);
         var addressEntity = dto.Address is null
-                ? CreatePlaceholderAddress()
-                : new Address
+            ? CreatePlaceholderAddress()
+            : new Address
             {
                 Id = Guid.NewGuid(),
                 Street = dto.Address.Street,
@@ -68,10 +69,11 @@ public record PersonDto : ContactBaseDto
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             Position = dto.Position,
-            BirthDate = dto.BirthDate, 
-            Gender = dto.Gender, 
+            BirthDate = dto.BirthDate,
+            Gender = dto.Gender,
             Employer = null,
-            Organization = null
+            Organization = null,
+            CreatedByUserId = createdByUserId
         };
     }
     

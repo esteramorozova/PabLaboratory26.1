@@ -14,7 +14,8 @@ public class PersonService(IContactUnitOfWork unitOfWork) : IPersonService
         if (person is null)
             throw new ContactNotFoundException($"Person with id={personId} not found!");
 
-        person.Notes ??= new List<Note>();
+        if (person.Notes.Count == 0)
+            person.Notes = new List<Note>();
 
         var note = new Note
         {
@@ -38,7 +39,7 @@ public class PersonService(IContactUnitOfWork unitOfWork) : IPersonService
         if (person is null)
             throw new ContactNotFoundException($"Person with id={personId} not found!");
 
-        person.Notes ??= new List<Note>();
+        
 
         var note = person.Notes.FirstOrDefault(n => n.Id == noteId);
         if (note is null)
@@ -57,9 +58,9 @@ public class PersonService(IContactUnitOfWork unitOfWork) : IPersonService
         return PersonDto.FromEntity(person);
     }
 
-    public async Task<PersonDto> AddPerson(CreatePersonDto personDto)
+    public async Task<PersonDto> AddPerson(CreatePersonDto personDto, string? createdByUserId = null)
     {
-        var entity = PersonDto.ToEntity(personDto);
+        var entity = PersonDto.ToEntity(personDto, createdByUserId: createdByUserId);
 
         if (personDto.EmployerId is Guid employerId)
         {
@@ -72,6 +73,9 @@ public class PersonService(IContactUnitOfWork unitOfWork) : IPersonService
         await unitOfWork.SaveChangesAsync();
         return PersonDto.FromEntity(entity);
     }
+
+    public Task<PersonDto> CreateAsync(CreatePersonDto dto, string? createdByUserId = null)
+        => AddPerson(dto, createdByUserId);
 
     public async Task<Person> UpdatePerson(UpdatePersonDto personDto)
     {
@@ -106,10 +110,7 @@ public class PersonService(IContactUnitOfWork unitOfWork) : IPersonService
             {
                 var employer = await unitOfWork.Companies.FindByIdAsync(personDto.EmployerId.Value);
                 if (employer is null)
-                {
                     throw new KeyNotFoundException($"Company with id '{personDto.EmployerId.Value}' was not found.");
-                }
-
                 person.Employer = employer;
             }
         }
@@ -134,8 +135,6 @@ public class PersonService(IContactUnitOfWork unitOfWork) : IPersonService
     }
 
     public Task<PersonDto?> FindByIdAsync(Guid id) => GetById(id);
-
-    public Task<PersonDto> CreateAsync(CreatePersonDto dto) => AddPerson(dto);
 
     public async Task<PersonDto> UpdateAsync(Guid id, UpdatePersonDto dto)
     {
@@ -184,9 +183,7 @@ public class PersonService(IContactUnitOfWork unitOfWork) : IPersonService
         if (person is null) throw new KeyNotFoundException($"Person with id '{personId}' was not found.");
 
         if (person.Tags.Any(t => string.Equals(t.Name, tag, StringComparison.OrdinalIgnoreCase)))
-        {
             return;
-        }
 
         person.Tags.Add(new Tag
         {
@@ -219,4 +216,3 @@ public class PersonService(IContactUnitOfWork unitOfWork) : IPersonService
         }
     }
 }
-

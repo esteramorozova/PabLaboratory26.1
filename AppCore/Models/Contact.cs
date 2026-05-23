@@ -11,6 +11,8 @@ public abstract class Contact : EntityBase
     public DateTime? UpdatedAt { get; set; }
 
     public ContactStatus Status { get; set; }
+    
+    public string? CreatedByUserId { get; set; }
 
     public List<Tag> Tags { get; set; } = new();
     public List<Note> Notes { get; set; } = new();

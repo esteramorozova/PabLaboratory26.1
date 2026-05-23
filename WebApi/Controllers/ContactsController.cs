@@ -1,8 +1,10 @@
+using AppCore;
 using AppCore.Authorization;
 using AppCore.Dto;
 using AppCore.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace WebApi.Controllers;
 
@@ -29,7 +31,8 @@ public class ContactsController(IPersonService service): ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreatePersonDto dto)
     {
-        var result = await service.AddPerson(dto);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var result = await service.AddPerson(dto, userId);
         return CreatedAtAction(nameof(GetPerson), new { id = result.Id }, result);
     }
     
@@ -39,8 +42,32 @@ public class ContactsController(IPersonService service): ControllerBase
         var person = await service.GetById(id);
         if (person is null)
             return NotFound(new { Message = $"Person with ID {id} not found." });
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var isAdmin = User.IsInRole(UserRole.Administrator.ToString());
+
+        if (!isAdmin && person.CreatedByUserId != userId)
+            return Forbid();
+
         var updatedPerson = await service.UpdateAsync(id, dto);
         return Ok(updatedPerson);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var person = await service.GetById(id);
+        if (person is null)
+            return NotFound(new { Message = $"Person with ID {id} not found." });
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var isAdmin = User.IsInRole(UserRole.Administrator.ToString());
+
+        if (!isAdmin && person.CreatedByUserId != userId)
+            return Forbid();
+
+        await service.RemoveByIdAsync(id);
+        return NoContent();
     }
     
     [HttpPost("{contactId:guid}/notes")]
