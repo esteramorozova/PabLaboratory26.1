@@ -7,19 +7,23 @@ namespace UnitTest.IntegrationTests;
 public class AuthIntegrationTest : IClassFixture<WebAppFactory>
 {
     private readonly HttpClient _client;
+    
+    // Użytkownik z IdentityDbSeeder — tworzony przez UserManager z poprawnym hashem
+    private const string TestEmail = "admin@crm.pl";
+    private const string TestPassword = "Admin@123!";
 
     public AuthIntegrationTest(WebAppFactory factory)
     {
         _client = factory.CreateClient();
     }
-
+    
     [Fact]
     public async Task Login_ValidCredentials_Returns200()
     {
         var response = await _client.PostAsJsonAsync("/api/auth/login", new LoginDto
         {
-            Email = "admin@wsei.edu.pl",
-            Password = "Admin123!"
+            Email = TestEmail,
+            Password = TestPassword
         });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -30,7 +34,7 @@ public class AuthIntegrationTest : IClassFixture<WebAppFactory>
     {
         var response = await _client.PostAsJsonAsync("/api/auth/login", new LoginDto
         {
-            Email = "admin@wsei.edu.pl",
+            Email = TestEmail,
             Password = "zle_haslo"
         });
 
@@ -47,16 +51,14 @@ public class AuthIntegrationTest : IClassFixture<WebAppFactory>
     [Fact]
     public async Task GetContacts_WithValidToken_Returns200()
     {
-        // Logowanie
         var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginDto
         {
-            Email = "admin@wsei.edu.pl",
-            Password = "Admin123!"
+            Email = TestEmail,
+            Password = TestPassword
         });
 
         var authResult = await loginResponse.Content.ReadFromJsonAsync<AuthResponseDto>();
-        
-        // Żądanie z tokenem
+
         _client.DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authResult!.AccessToken);
 
