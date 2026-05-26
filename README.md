@@ -2,7 +2,7 @@
 * **Estera Morozova** - nr albumu: 15743
 
 ## Link do repozytorium
-* GitHub: (Tutaj wklej link do Twojego prywatnego repozytorium na GitHubie)
+* GitHub: (https://github.com/esteramorozova/PabLaboratory26.1.git)
 
 ## Lista zrealizowanych funkcji
 
