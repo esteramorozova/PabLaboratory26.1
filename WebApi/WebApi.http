@@ -75,15 +75,6 @@ Content-Type: application/json
 
 
 ###
-POST {{WebApi_HostAddress}}/api/auth/login
-Content-Type: application/json
-
-{
-  "email": "admin@wsei.edu.pl",
-  "password": "Admin123!"
-}
-
-###
 # Oczekiwane: 401 Unauthorized (bledne haslo)
 POST {{WebApi_HostAddress}}/api/auth/login
 Content-Type: application/json
@@ -195,13 +186,4 @@ Content-Type: application/json
   "password": "Manager@123!"
 }
 
-### Próba edycji kontaktu dodanego przez admina (powinno zwrócić 403)
-PUT {{WebApi_HostAddress}}/api/contacts/e42f56d2-857f-4dda-8886-aa172cffec2f
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IkY1QkFERTE0LTZDQzgtNDJBMi05QTQ0LTk4NDJEQTJEOTI4MCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQGNybS5wbCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2dpdmVubmFtZSI6IkFkYW0iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zdXJuYW1lIjoiQWRtaW5pc3RyYXRvciIsImRlcGFydG1lbnQiOiJJVCIsInN0YXR1cyI6IkFjdGl2ZSIsImp0aSI6IjRlOWJiZTgwLTAxOWMtNDA0ZC04ODBjLTllODA0NzQ5YTJjYSIsImlhdCI6IjE3Nzk1MTk4OTciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbmlzdHJhdG9yIiwibmJmIjoxNzc5NTE5ODk3LCJleHAiOjE3Nzk1MjM0OTcsImlzcyI6IklkZWlzQ3JtQXBpIiwiYXVkIjoiQ3JtQ2xpZW50In0.xuIb6AYPzJFkx7oqHGeEJuIsCfuYED81RpbDPp3r4Vk
 
-{
-  "id": "e42f56d2-857f-4dda-8886-aa172cffec2f",
-  "firstName": "Piotr",
-  "lastName": "Zmieniony"
-}
