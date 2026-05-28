@@ -17,8 +17,7 @@ public class WebAppFactory : WebApplicationFactory<WebApi.Program>
 
         builder.ConfigureServices(services =>
         {
-            // 1. usuwanie WSZYSTKICH rejestracji powiązanych z bazą danych i EF Core,
-            // co uniemożliwi konflikt dostawców Sqlite oraz InMemory.
+
             var databaseDescriptors = services
                 .Where(d => d.ServiceType.FullName != null &&
                             (d.ServiceType.FullName.Contains("DbContext") ||
@@ -32,13 +31,11 @@ public class WebAppFactory : WebApplicationFactory<WebApi.Program>
                 services.Remove(descriptor);
             }
 
-            // 2. Rejestracja czystego kontekstu bazy InMemory ze stabilną nazwą
             services.AddDbContext<ContactsDbContext>(options =>
             {
                 options.UseInMemoryDatabase("CRM_Integration_Test_Database_Stable");
             });
 
-            // 3. Konfiguracja Identity dostosowana do testów integracyjnych
             services.Configure<IdentityOptions>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = false;
@@ -51,21 +48,17 @@ public class WebAppFactory : WebApplicationFactory<WebApi.Program>
         });
     }
 
-    // Wykonuje się bezpośrednio po zbudowaniu kontenera i postawieniu aplikacji serwerowej
     protected override IHost CreateHost(IHostBuilder builder)
     {
         var host = base.CreateHost(builder);
 
-        // Tworzymy zakres do przygotowania schematu i danych testowych
         using (var scope = host.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<ContactsDbContext>();
-            
-            // Czyszczenie i przygotowanie tabel
+        
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
 
-            // Pobranie i uruchomienie seeder'a tożsamości (IdentityDbSeeder)
             var seeders = scope.ServiceProvider.GetServices<IDataSeeder>();
             var identitySeeder = seeders.FirstOrDefault(s => s.GetType().Name == "IdentityDbSeeder");
 
@@ -86,7 +79,7 @@ public class WebAppFactory : WebApplicationFactory<WebApi.Program>
                 }
                 catch
                 {
-                    // Wyciszenie ewentualnych błędów ładowania assembly podczas inicjalizacji środowiska testowego
+                    
                 }
             }
         }
